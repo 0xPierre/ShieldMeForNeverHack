@@ -1,2 +1,2 @@
 # NeerHackPrivacyExt
-.
+.mirror
