@@ -4,10 +4,9 @@
 
 import { getCountry } from '../services/geoip.js';
 import { verifyDomain } from '../services/ascii.js';
-import { extractDomain } from '../services/domain.js';
 import { lookup as whoisLookup } from '../services/whois.js';
-import addTagToEmail from '../services/mail.js';
-import { getBaseDomain } from '../services/domain.js';
+import { addTagToEmail, autoCompleteEmail } from '../services/mail.js';
+import { getBaseDomain, extractDomain } from '../services/domain.js';
 
 // Store the generated tagged email
 let currentTaggedEmail = null;
@@ -44,7 +43,7 @@ function setupEventListeners() {
   const fillEmailBtn = document.getElementById('fillEmailBtn');
   
   if (changeColorBtn) {
-    changeColorBtn.addEventListener('click', handleColorChange);
+    changeColorBtn.addEventListener('click', handleColorChange);extractDomain
   }
   
   if (addTagBtn) {
@@ -125,7 +124,7 @@ async function checkWhois(domain) {
   
   try {
     const data = await whoisLookup(domain);
-    
+  
     if (data.creation_date) {
       const creationDate = Array.isArray(data.creation_date) 
         ? data.creation_date[0] 
@@ -175,7 +174,7 @@ async function handleColorChange() {
 function generateRandomColor() {
   return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
 }
-
+extractDomain
 /**
  * Handle adding a tag to the email
  */
@@ -239,28 +238,7 @@ async function handleFillEmail() {
   }
   
   try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: (email) => {
-        const activeElement = document.activeElement;
-        if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
-          activeElement.value = email;
-          activeElement.dispatchEvent(new Event('input', { bubbles: true }));
-        } else {
-          // Try to find an email input field
-          const emailInput = document.querySelector('input[type="email"]') || 
-                             document.querySelector('input[name*="email"]') ||
-                             document.querySelector('input[placeholder*="email"]');
-          if (emailInput) {
-            emailInput.value = email;
-            emailInput.dispatchEvent(new Event('input', { bubbles: true }));
-          }
-        }
-      },
-      args: [currentTaggedEmail]
-    });
+    autoCompleteEmail(currentTaggedEmail);
     
     showResult(emailResultDiv, 'safe', `Filled: ${currentTaggedEmail}`);
   } catch (error) {
