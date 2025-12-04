@@ -5,12 +5,6 @@
 import { getCountry } from '../services/geoip.js';
 import { verifyDomain } from '../services/ascii.js';
 import { extractDomain } from '../services/domain.js';
-import  addTagToEmail from '../services/mail.js';
-import  getDomainName from '../services/domain.js';
-
-window.addTagToEmail = addTagToEmail;
-window.getDomainName = getDomainName;
-
 
 document.addEventListener('DOMContentLoaded', init);
 
@@ -118,24 +112,4 @@ async function handleColorChange() {
  */
 function generateRandomColor() {
   return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
-}
-
-async function generateMailPlus() {
-  const resultInput = document.getElementById('result');
-  const userEmail = "pierre.b@gmail.com"; // il faudra voit commtne on récupère l'email du user
-
-  try {
-    const tag = await getDomainName();
-    const generated = addTagToEmail(userEmail, tag);
-
-    if (resultInput) {
-      resultInput.value = generated;
-    }
-
-    window.generatedEmail = generated;
-
-  } catch (err) {
-    console.error("Erreur lors de la génération du mail+ :", err);
-    if (resultInput) resultInput.value = "Impossible de générer le mail+";
-  }
 }
