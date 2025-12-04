@@ -2,9 +2,9 @@
  * WHOIS service
  */
 
-import { get } from './api.js';
+import { post } from './api.js';
 
 export async function lookup(domain) {
-  return get(`/whois/${domain}`);
+  console.log(domain);
+  return post('/whois/lookup', { domain });
 }
-

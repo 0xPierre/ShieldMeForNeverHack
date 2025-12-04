@@ -1,10 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // Get the current active tab
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    // Get the current tab URL
     const url = tabs[0].url;
 
-    // Create a URL object to extract the hostname
     const urlObj = new URL(url);
     const domain = urlObj.hostname;
 
@@ -18,8 +15,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const faviconImg = document.querySelector('img[data-alt="Favicon for example.com"]');
     if (faviconImg) {
       faviconImg.setAttribute('data-alt', `Favicon for ${domain}`);
-      // Update the favicon image source to use the current domain's favicon
-      faviconImg.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+      if (tabs[0].favIconUrl) {
+        faviconImg.src = tabs[0].favIconUrl;
+      } else {
+        faviconImg.src = '';
+      }
     }
   });
 

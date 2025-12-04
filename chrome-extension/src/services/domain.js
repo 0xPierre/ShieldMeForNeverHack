@@ -1,7 +1,6 @@
 /**
  * Domain detection service
  */
-
 export function extractDomain(url) {
   try {
     const { hostname } = new URL(url);
@@ -16,4 +15,3 @@ export function getBaseDomain(hostname) {
   if (parts.length <= 2) return hostname;
   return parts.slice(-2).join('.');
 }
-
