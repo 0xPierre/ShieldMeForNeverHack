@@ -6,6 +6,11 @@ import { getCountry } from '../services/geoip.js';
 import { verifyDomain } from '../services/ascii.js';
 import { extractDomain } from '../services/domain.js';
 import { lookup as whoisLookup } from '../services/whois.js';
+import addTagToEmail from '../services/mail.js';
+import { getBaseDomain } from '../services/domain.js';
+
+// Store the generated tagged email
+let currentTaggedEmail = null;
 
 document.addEventListener('DOMContentLoaded', init);
 
@@ -15,6 +20,18 @@ document.addEventListener('DOMContentLoaded', init);
 function init() {
   setupEventListeners();
   checkCurrentDomain();
+  initEmailSection();
+}
+
+/**
+ * Initialize the email section
+ */
+function initEmailSection() {
+  const emailResultDiv = document.getElementById('emailResult');
+  if (emailResultDiv) {
+    emailResultDiv.textContent = 'Enter your email and click "Add Tag"';
+    emailResultDiv.className = 'result';
+  }
 }
 
 /**
@@ -22,9 +39,24 @@ function init() {
  */
 function setupEventListeners() {
   const changeColorBtn = document.getElementById('changeColorBtn');
+  const addTagBtn = document.getElementById('addTagBtn');
+  const copyEmailBtn = document.getElementById('copyEmailBtn');
+  const fillEmailBtn = document.getElementById('fillEmailBtn');
   
   if (changeColorBtn) {
     changeColorBtn.addEventListener('click', handleColorChange);
+  }
+  
+  if (addTagBtn) {
+    addTagBtn.addEventListener('click', handleAddTag);
+  }
+  
+  if (copyEmailBtn) {
+    copyEmailBtn.addEventListener('click', handleCopyEmail);
+  }
+  
+  if (fillEmailBtn) {
+    fillEmailBtn.addEventListener('click', handleFillEmail);
   }
 }
 
@@ -143,4 +175,98 @@ async function handleColorChange() {
 function generateRandomColor() {
   return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
 }
+
+/**
+ * Handle adding a tag to the email
+ */
+async function handleAddTag() {
+  const emailInput = document.getElementById('emailInput');
+  const emailResultDiv = document.getElementById('emailResult');
+  const emailDetailsDiv = document.getElementById('emailDetails');
+  const email = emailInput.value.trim();
+  
+  if (!email) {
+    showResult(emailResultDiv, 'error', 'Please enter an email address');
+    emailDetailsDiv.classList.add('hidden');
+    return;
+  }
+  
+  try {
+    // Get current domain for the tag
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const domain = extractDomain(tab.url);
+    const baseDomain = getBaseDomain(domain);
+    const tag = baseDomain.split('.')[0];
+    
+    currentTaggedEmail = addTagToEmail(email, tag);
+    showResult(emailResultDiv, 'safe', `Tagged email: ${currentTaggedEmail}`);
+    emailDetailsDiv.classList.remove('hidden');
+  } catch (error) {
+    showResult(emailResultDiv, 'error', error.message);
+    emailDetailsDiv.classList.add('hidden');
+    currentTaggedEmail = null;
+  }
+}
+
+/**
+ * Handle copying the tagged email to clipboard
+ */
+async function handleCopyEmail() {
+  const emailResultDiv = document.getElementById('emailResult');
+  
+  if (!currentTaggedEmail) {
+    showResult(emailResultDiv, 'error', 'No tagged email to copy');
+    return;
+  }
+  
+  try {
+    await navigator.clipboard.writeText(currentTaggedEmail);
+    showResult(emailResultDiv, 'safe', `Copied: ${currentTaggedEmail}`);
+  } catch (error) {
+    showResult(emailResultDiv, 'error', 'Failed to copy to clipboard');
+  }
+}
+
+/**
+ * Handle filling the tagged email into the active page
+ */
+async function handleFillEmail() {
+  const emailResultDiv = document.getElementById('emailResult');
+  
+  if (!currentTaggedEmail) {
+    showResult(emailResultDiv, 'error', 'No tagged email to fill');
+    return;
+  }
+  
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: (email) => {
+        const activeElement = document.activeElement;
+        if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
+          activeElement.value = email;
+          activeElement.dispatchEvent(new Event('input', { bubbles: true }));
+        } else {
+          // Try to find an email input field
+          const emailInput = document.querySelector('input[type="email"]') || 
+                             document.querySelector('input[name*="email"]') ||
+                             document.querySelector('input[placeholder*="email"]');
+          if (emailInput) {
+            emailInput.value = email;
+            emailInput.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+        }
+      },
+      args: [currentTaggedEmail]
+    });
+    
+    showResult(emailResultDiv, 'safe', `Filled: ${currentTaggedEmail}`);
+  } catch (error) {
+    showResult(emailResultDiv, 'error', `Failed to fill: ${error.message}`);
+  }
+}
+
+
 
