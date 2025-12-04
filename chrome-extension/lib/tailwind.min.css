@@ -1,0 +1,161 @@
+/* Tailwind CSS v3.3.3 Basic Utilities */
+
+/* Base styles */
+:root {
+  --primary: #135bec;
+  --background-light: #f6f6f8;
+  --background-dark: #101622;
+}
+
+/* Layout */
+.flex { display: flex; }
+.grid { display: grid; }
+.flex-col { flex-direction: column; }
+.flex-1, .flex-grow { flex-grow: 1; }
+.flex-shrink-0, .shrink-0 { flex-shrink: 0; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.w-full { width: 100%; }
+.w-\[27px\] { width: 27px; }
+.w-\[51px\] { width: 51px; }
+.max-w-md { max-width: 28rem; }
+.h-full, .h-auto { height: auto; }
+.h-\[31px\] { height: 31px; }
+.h-4 { height: 1rem; }
+.w-4 { width: 1rem; }
+.min-h-screen { min-height: 100vh; }
+.min-w-72 { min-width: 18rem; }
+.size-3 { width: 0.75rem; height: 0.75rem; }
+.size-7 { width: 1.75rem; height: 1.75rem; }
+.size-8 { width: 2rem; height: 2rem; }
+.size-10 { width: 2.5rem; height: 2.5rem; }
+.size-12 { width: 3rem; height: 3rem; }
+.size-24 { width: 6rem; height: 6rem; }
+.inline-flex { display: inline-flex; }
+.p-2 { padding: 0.5rem; }
+.p-3 { padding: 0.75rem; }
+.p-0\.5 { padding: 0.125rem; }
+.px-1 { padding-left: 0.25rem; padding-right: 0.25rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
+.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+.pt-6 { padding-top: 1.5rem; }
+.pb-2 { padding-bottom: 0.5rem; }
+.pl-10 { padding-left: 2.5rem; }
+.pr-3 { padding-right: 0.75rem; }
+.m-auto { margin: auto; }
+.m-0 { margin: 0; }
+
+/* Typography */
+.font-display { font-family: 'Inter', sans-serif; }
+.text-xs { font-size: 0.75rem; }
+.text-sm { font-size: 0.875rem; }
+.text-base { font-size: 1rem; }
+.text-xl { font-size: 1.25rem; }
+.text-3xl { font-size: 1.875rem; }
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-bold { font-weight: 700; }
+.leading-normal { line-height: 1.5; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; }
+.line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+
+/* Colors */
+.bg-white { background-color: white; }
+.bg-slate-50 { background-color: #f8fafc; }
+.bg-slate-100 { background-color: #f1f5f9; }
+.bg-slate-800 { background-color: #1e293b; }
+.bg-slate-900\/50 { background-color: rgba(15, 23, 42, 0.5); }
+.bg-background-light { background-color: var(--background-light); }
+.bg-background-dark { background-color: var(--background-dark); }
+.bg-transparent { background-color: transparent; }
+.bg-\[\#0bda5e\] { background-color: #0bda5e; }
+.bg-primary { background-color: var(--primary); }
+.bg-primary\/20 { background-color: rgba(19, 91, 236, 0.2); }
+.bg-green-500 { background-color: #22c55e; }
+.hover\:bg-primary\/90:hover { background-color: rgba(19, 91, 236, 0.9); }
+
+.text-white { color: white; }
+.text-slate-400 { color: #94a3b8; }
+.text-slate-500 { color: #64748b; }
+.text-slate-600 { color: #475569; }
+.text-slate-700 { color: #334155; }
+.text-slate-900 { color: #0f172a; }
+.text-green-500 { color: #22c55e; }
+.text-amber-500 { color: #f59e0b; }
+.text-primary { color: var(--primary); }
+.text-primary-300 { color: #93c5fd; }
+.text-primary-800 { color: #1e40af; }
+.text-red-500 { color: #ef4444; }
+.hover\:text-red-700:hover { color: #b91c1c; }
+.dark .dark\:text-primary-300 { color: #93c5fd; }
+.dark .dark\:hover\:text-red-400:hover { color: #f87171; }
+
+.border-slate-200 { border-color: #e2e8f0; }
+.border-slate-800 { border-color: #1e293b; }
+.stroke-slate-200 { stroke: #e2e8f0; }
+.stroke-slate-700 { stroke: #334155; }
+.stroke-\[\#0bda5e\] { stroke: #0bda5e; }
+
+/* Borders */
+.border { border-width: 1px; }
+.border-none { border-style: none; }
+.rounded { border-radius: 0.25rem; }
+.rounded-md { border-radius: 0.375rem; }
+.rounded-lg { border-radius: 0.5rem; }
+.rounded-full { border-radius: 9999px; }
+.border-slate-300 { border-color: #cbd5e1; }
+.border-slate-600 { border-color: #475569; }
+.border-slate-700 { border-color: #334155; }
+.invisible { visibility: hidden; }
+.pointer-events-none { pointer-events: none; }
+.-translate-y-1\/2 { transform: translateY(-50%); }
+.has-\[\:checked\]\:justify-end:has(:checked) { justify-content: flex-end; }
+.has-\[\:checked\]\:bg-primary:has(:checked) { background-color: var(--primary); }
+
+/* Effects */
+.hover\:bg-slate-50:hover { background-color: #f8fafc; }
+.hover\:bg-slate-100:hover { background-color: #f1f5f9; }
+.hover\:bg-slate-800:hover { background-color: #1e293b; }
+.hover\:bg-slate-900\/50:hover { background-color: rgba(15, 23, 42, 0.5); }
+.transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; }
+.duration-150 { transition-duration: 150ms; }
+.cursor-pointer { cursor: pointer; }
+.cursor-not-allowed { cursor: not-allowed; }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+.fixed { position: fixed; }
+.bottom-4 { bottom: 1rem; }
+.right-4 { right: 1rem; }
+
+/* Dark mode */
+.dark .dark\:bg-background-dark { background-color: var(--background-dark); }
+.dark .dark\:bg-slate-800 { background-color: #1e293b; }
+.dark .dark\:bg-slate-900\/50 { background-color: rgba(15, 23, 42, 0.5); }
+.dark .dark\:border-slate-800 { border-color: #1e293b; }
+.dark .dark\:text-white { color: white; }
+.dark .dark\:text-slate-400 { color: #94a3b8; }
+.dark .dark\:text-slate-500 { color: #64748b; }
+.dark .dark\:stroke-slate-700 { stroke: #334155; }
+.dark .dark\:hover\:bg-slate-800:hover { background-color: #1e293b; }
+.dark .dark\:hover\:bg-slate-900\/50:hover { background-color: rgba(15, 23, 42, 0.5); }
+
+/* SVG specific */
+.origin-center { transform-origin: center; }
+.-rotate-90 { transform: rotate(-90deg); }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.absolute { position: absolute; }
+.relative { position: relative; }
+.top-0 { top: 0; }
+.left-0 { left: 0; }
+.left-3 { left: 0.75rem; }
+.top-1\/2 { top: 50%; }

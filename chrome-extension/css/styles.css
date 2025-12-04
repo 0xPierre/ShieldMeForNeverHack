@@ -1,0 +1,131 @@
+/* Inter font */
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Inter Regular'), local('Inter-Regular'),
+    url(chrome-extension://__MSG_@@extension_id__/fonts/Inter-Regular.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    src: local('Inter Medium'), local('Inter-Medium'),
+    url(chrome-extension://__MSG_@@extension_id__/fonts/Inter-Medium.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    src: local('Inter SemiBold'), local('Inter-SemiBold'),
+    url(chrome-extension://__MSG_@@extension_id__/fonts/Inter-SemiBold.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Inter Bold'), local('Inter-Bold'),
+    url(chrome-extension://__MSG_@@extension_id__/fonts/Inter-Bold.woff2) format('woff2');
+}
+
+/* Material Symbols */
+@font-face {
+    font-family: 'Material Symbols Outlined';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Material Symbols Outlined'),
+    url(chrome-extension://__MSG_@@extension_id__/fonts/MaterialSymbolsOutlined.woff2) format('woff2');
+}
+
+/* Custom background colors for light/dark mode */
+:root {
+    --background-light: #ffffff;
+    --background-dark: #1e293b;
+}
+
+.bg-background-light {
+    background-color: var(--background-light);
+}
+
+.dark .dark\:bg-background-dark {
+    background-color: var(--background-dark);
+}
+
+/* Dark mode text colors */
+.dark .dark\:text-white {
+    color: #ffffff;
+}
+
+.dark .dark\:text-slate-300 {
+    color: #cbd5e1;
+}
+
+.dark .dark\:text-slate-400 {
+    color: #94a3b8;
+}
+
+.dark .dark\:text-slate-500 {
+    color: #64748b;
+}
+
+/* Dark mode background colors for inputs */
+.dark .dark\:bg-slate-800 {
+    background-color: #1e293b;
+}
+
+.dark .dark\:bg-slate-900\/50 {
+    background-color: rgba(15, 23, 42, 0.5);
+}
+
+.dark .dark\:bg-slate-700 {
+    background-color: #334155;
+}
+
+/* Dark mode border colors */
+.dark .dark\:border-slate-800 {
+    border-color: #1e293b;
+}
+
+.dark .dark\:border-slate-700 {
+    border-color: #334155;
+}
+
+.dark .dark\:border-slate-600 {
+    border-color: #475569;
+}
+
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24;
+}
+
+/* Rating circle animation */
+@keyframes circleAnimation {
+    from {
+        stroke-dashoffset: 282.7; /* Start with full circle hidden */
+    }
+    to {
+        stroke-dashoffset: 28.27; /* End with the actual rating value */
+    }
+}
+
+.rating-circle {
+    animation: circleAnimation 1.5s ease-out forwards;
+}
