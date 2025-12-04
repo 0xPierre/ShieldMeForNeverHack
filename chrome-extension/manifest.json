@@ -4,7 +4,8 @@
   "version": "1.0",
   "description": "Extension chrome d'aide à la sécurité sur internet",
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "src/popup/popup.html"
+
   },
   "permissions": []
 }
