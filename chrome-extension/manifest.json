@@ -5,7 +5,6 @@
   "description": "Extension chrome d'aide à la sécurité sur internet",
   "action": {
     "default_popup": "src/popup/popup.html"
-
   },
-  "permissions": []
+  "permissions": ["tabs"]
 }

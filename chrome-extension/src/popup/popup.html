@@ -7,9 +7,18 @@
 </head>
 <body>
   <div class="container">
-    <h1>Hello World!</h1>
-    <p>This is a simple Chrome extension.</p>
-    <button id="changeColorBtn">Change Color</button>
+    <h1>NeerHackPrivacy</h1>
+    
+    <section class="ascii-test">
+      <h2>ASCII Domain Check</h2>
+      <p>Detect potential IDN homograph attacks</p>
+      <div id="currentDomain" class="current-domain">Loading...</div>
+      <div id="asciiResult" class="result hidden"></div>
+    </section>
+
+    <section class="color-section">
+      <button id="changeColorBtn">Change Color</button>
+    </section>
   </div>
   <script type="module" src="popup.js"></script>
 </body>
