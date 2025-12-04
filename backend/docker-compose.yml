@@ -1,0 +1,31 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fast-api
+    restart: unless-stopped
+    ports:
+      - "6123:8000"
+    environment:
+      - DEBUG=false
+      - HOST=0.0.0.0
+      - PORT=8000
+      - GEOIP_DB_PATH=data/GeoLite2-Country.mmdb
+      - CORS_ORIGINS=["*"]
+    volumes:
+      # Mount GeoIP database for updates without rebuild
+      - ./data:/app/data:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+

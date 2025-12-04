@@ -1,0 +1,37 @@
+# syntax=docker/dockerfile:1
+
+FROM python:3.13-slim
+
+# Install uv for fast dependency management
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# Create non-root user
+RUN groupadd --gid 1000 appgroup && \
+    useradd --uid 1000 --gid appgroup --shell /bin/bash --create-home appuser
+
+WORKDIR /app
+
+# Copy dependency files
+COPY pyproject.toml uv.lock ./
+
+# Install dependencies into a virtual environment
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev --no-install-project
+
+# Copy application code (will be overridden by volume mount in dev)
+COPY --chown=appuser:appgroup app/ ./app/
+COPY --chown=appuser:appgroup data/ ./data/
+
+# Set environment variables
+ENV PATH="/app/.venv/bin:$PATH" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Switch to non-root user
+USER appuser
+
+EXPOSE 8000
+
+# Run with hot reload for development
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
