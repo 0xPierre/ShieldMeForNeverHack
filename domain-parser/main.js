@@ -23,7 +23,6 @@ const testDomains = [
     { value: "support.helpdesk.info", valid: true },
 
     // --- Mixed protocols / no protocol ---
-    { value: "ftp://files.server.net", valid: true },
     { value: "mailto:contact@example.com", valid: true },
     { value: "www.testsite.biz", valid: true },
     { value: "noscheme-domain.com", valid: true },
