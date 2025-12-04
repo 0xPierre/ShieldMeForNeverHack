@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "NeerHackPrivacy",
+  "version": "1.0",
+  "description": "Extension chrome d'aide à la sécurité sur internet",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": []
+}
