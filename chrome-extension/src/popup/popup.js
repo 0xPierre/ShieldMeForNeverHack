@@ -1,4 +1,9 @@
-document.addEventListener('DOMContentLoaded', function() {
+/**
+ * 
+ * Manage the domain display in the popup
+ * 
+ */
+document.addEventListener('DOMContentLoaded', () => {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     const url = tabs[0].url;
 
@@ -22,16 +27,23 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
+});
+
+
+/**
+ * 
+ * Manage the navigation
+ * 
+ */
+document.addEventListener('DOMContentLoaded', () => {
 
   // Add event listener for the settings button
   const settingsButton = document.getElementById('settings-button');
   if (settingsButton) {
     settingsButton.addEventListener('click', function() {
       console.log('Settings button clicked');
-      // Navigate to settings page
       window.location.href = 'settings.html';
     });
   }
-
-});
+})
 
