@@ -1,0 +1,54 @@
+stages:
+  - github_mr
+
+create_github_mr:
+  stage: github_mr
+  image: alpine:latest
+  script:
+    # Install required tools
+    - apk add --no-cache git curl bash
+
+    # Configure Git
+    - git config --global user.name "GitLab CI Bot"
+    - git config --global user.email "bot@example.com"
+
+    # Ensure a local branch exists (detached HEAD fix)
+    - git checkout -b $CI_COMMIT_REF_NAME
+
+    # Add GitHub remote
+    - git remote add github https://$GITHUB_TOKEN@github.com/0xPierre/NeerHackPrivacyExt.git
+
+    # Push the branch to GitHub
+    - git push github $CI_COMMIT_REF_NAME || echo "Branch already exists on GitHub"
+    - |
+      curl -X POST \
+        -H "Authorization: token $GITHUB_TOKEN" \
+        -H "Accept: application/vnd.github+json" \
+        https://api.github.com/repos/0xPierre/NeerHackPrivacyExt/pulls \
+        -d '{"title":"Merge '$CI_COMMIT_REF_NAME' from GitLab","head":"'$CI_COMMIT_REF_NAME'","base":"main","body":"Automatic MR from GitLab"}'
+
+#stages:
+#  - sync
+#
+#sync_to_github:
+#  stage: sync
+#  image: alpine/git
+#  script:
+#    # Configure Git user
+#    - git config --global user.name "GitLab CI Bot"
+#    - git config --global user.email "bot@example.com"
+#
+#    # Clone the GitHub repo
+#    - git clone https://$GITHUB_TOKEN@github.com/0xPierre/NeerHackPrivacyExt.git github-repo
+#    - cd github-repo
+#
+#    # Add GitLab as a remote and fetch
+#    - git remote add gitlab https://gitlab.com/$CI_PROJECT_PATH.git
+#    - git fetch gitlab
+#
+#    # Merge GitLab changes into GitHub main branch
+#    - git checkout main
+#    - git merge gitlab/main --no-ff -m "Merge changes from GitLab"
+#
+#    # Push merged commits to GitHub
+#    - git push origin main
