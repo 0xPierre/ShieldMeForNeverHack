@@ -5,6 +5,7 @@
 import { getCountry } from '../services/geoip.js';
 import { verifyDomain } from '../services/ascii.js';
 import { extractDomain } from '../services/domain.js';
+import { lookup as whoisLookup } from '../services/whois.js';
 
 document.addEventListener('DOMContentLoaded', init);
 
@@ -53,6 +54,7 @@ async function checkCurrentDomain() {
 
     currentDomainDiv.textContent = domain;
     checkDomainAscii(domain);
+    checkWhois(domain);
   } catch (error) {
     currentDomainDiv.textContent = 'Error';
     showResult(resultDiv, 'error', `Error: ${error.message}`);
@@ -80,6 +82,34 @@ function checkDomainAscii(domain) {
       '⚠ Potential homograph attack detected!',
       `Non-ASCII characters: ${chars}`
     );
+  }
+}
+
+/**
+ * Check WHOIS info for the domain
+ */
+async function checkWhois(domain) {
+  const whoisResultDiv = document.getElementById('whoisResult');
+  
+  try {
+    const data = await whoisLookup(domain);
+    
+    if (data.creation_date) {
+      const creationDate = Array.isArray(data.creation_date) 
+        ? data.creation_date[0] 
+        : data.creation_date;
+      const date = new Date(creationDate);
+      const formattedDate = date.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      showResult(whoisResultDiv, 'safe', `Domain created: ${formattedDate}`);
+    } else {
+      showResult(whoisResultDiv, 'warning', 'Creation date not available');
+    }
+  } catch (error) {
+    showResult(whoisResultDiv, 'error', `WHOIS error: ${error.message}`);
   }
 }
 
@@ -113,3 +143,4 @@ async function handleColorChange() {
 function generateRandomColor() {
   return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
 }
+
