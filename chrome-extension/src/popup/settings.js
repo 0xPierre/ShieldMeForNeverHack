@@ -46,7 +46,7 @@ function applySettings(items) {
   const aliasFormat = document.getElementById('alias-format');
   if (aliasFormat) {
     for (let i = 0; i < aliasFormat.options.length; i++) {
-      if (aliasFormat.options[i].text === items.aliasFormat) {
+      if (aliasFormat.options[i].value === items.aliasFormat) {
         aliasFormat.selectedIndex = i;
         break;
       }
@@ -67,7 +67,7 @@ function saveSettings() {
 
   // Create settings object
   const settings = {
-    aliasFormat: aliasFormat ? aliasFormat.options[aliasFormat.selectedIndex].text : 'nomdusite',
+    aliasFormat: aliasFormat ? aliasFormat.options[aliasFormat.selectedIndex].value : 'nomdusite',
     userEmail: emailInput ? emailInput.value : '',
   };
 

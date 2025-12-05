@@ -137,7 +137,13 @@ const getCurrentTaggedEmail = async (items) => {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   const domain = extractDomain(tab.url);
   const baseDomain = getBaseDomain(domain);
-  const tag = baseDomain.split('.')[0];
+  let tag = baseDomain.split('.')[0];
+
+  if (items.aliasFormat === 'nomplusdate') {
+    const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+    tag += date;
+  }
+    
   const currentTaggedEmail = addTagToEmail(items.userEmail, tag);
   return currentTaggedEmail;
 }
