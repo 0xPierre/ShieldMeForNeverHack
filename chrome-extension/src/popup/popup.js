@@ -2,6 +2,7 @@ import { getCountry, getCountryByDomain } from "../services/geoip.js";
 import { whois, phishing } from "../services/index.js";
 import { extractDomain, getBaseDomain } from "../services/domain.js";
 import { addTagToEmail, autoCompleteEmail } from "../services/mail.js";
+import {verifyDomain} from "../services/ascii.js";
 
 let nbLoaded, grade;
 
@@ -58,6 +59,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 })
+
+/**
+ *
+ * Manage IDN homograph verification
+ *
+ */
+document.addEventListener('DOMContentLoaded', async () => {
+  // Extract domain name
+  const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+  const domain = extractDomain(tab.url);
+
+  const result = await verifyDomain(domain)
+  console.log(result)
+
+  document.getElementById("ascii-check-" + result.isAscii).classList.remove("hidden");
+});
 
 
 /**
