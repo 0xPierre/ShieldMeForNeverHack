@@ -56,7 +56,12 @@ function applySettings(items) {
   // Set user email
   const emailInput = document.getElementById('email');
   if (emailInput) {
-    emailInput.placeholder = items.userEmail ? items.userEmail : "jean.dupond@mail.com";
+    if (emailInput) {
+      emailInput.value = items.userEmail;
+    }
+    else {
+      emailInput.placeholder = "jean.dupond@mail.com";
+    }
   }
 }
 
