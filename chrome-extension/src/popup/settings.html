@@ -34,70 +34,32 @@
 
         <!-- Settings Content -->
         <main class="flex flex-col gap-4 flex-grow py-4">
-          <!-- Activate Feature Toggle -->
-          <div class="flex flex-1 flex-col items-start justify-between gap-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-3">
-            <div class="flex flex-col gap-1">
-              <p class="text-slate-900 dark:text-white text-sm font-bold leading-tight">Mail+</p>
-              <p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Activer l'autocomplétion automatiqu e-mail sur les formulaires.</p>
-            </div>
-            <label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-slate-200 dark:bg-slate-700 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary">
-              <div class="h-full w-[27px] rounded-full bg-white"></div>
-              <input checked="" class="invisible absolute" type="checkbox" id="activate-feature"/>
-            </label>
-          </div>
-
-          <!-- How it works section -->
-          <div class="flex flex-col gap-2">
-            <p class="text-slate-900 dark:text-white text-sm font-bold leading-tight">Comment ça marche ?</p>
-            <p class="text-slate-600 dark:text-slate-300 text-sm font-normal leading-normal">Cette fonctionnalité ajoute automatiquement une étiquette unique à votre e-mail lors du remplissage des formulaires (ex: <code class="bg-primary/20 text-primary-800 dark:text-primary-300 px-1 py-0.5 rounded">votre.email+site@provider.com</code>). Cela vous aide à suivre les inscriptions et à filtrer les spams sans révéler votre adresse principale.</p>
-          </div>
 
           <!-- Configuration section -->
           <div class="flex flex-col gap-2">
-            <p class="text-slate-900 dark:text-white text-sm font-bold leading-tight">Configuration</p>
 
             <div class="grid grid-cols-1 gap-3">
               <!-- Email Address -->
               <div class="flex flex-col gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-3">
                 <label class="text-sm font-bold text-slate-900 dark:text-white" for="email">Votre adresse e-mail</label>
-                <input class="w-full rounded border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 p-2 text-slate-500 dark:text-slate-400 cursor-not-allowed" id="email" readonly="" type="email" value="votre.email@provider.com"/>
+                <input class="w-full rounded border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 p-2 text-slate-500 dark:text-slate-400" id="email" type="email" placeholder="jean.dupond@mail.com"/>
               </div>
 
               <!-- Alias Format -->
               <div class="flex flex-col gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-3">
                 <label class="text-sm font-bold text-slate-900 dark:text-white">Format d'alias</label>
                 <select class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 p-2 text-slate-900 dark:text-white" id="alias-format">
-                  <option>+nomdusite (ex: +amazon)</option>
-                  <option>+chaînealéatoire (ex: +a8f3k2)</option>
-                  <option>+aaaammjj (ex: +20231027)</option>
+                  <option value="nomdusite">+nomdusite (ex: +amazon)</option>
+                  <option value="nomplusdate">+nomplusdate (ex: +amazon12052025)</option>
                 </select>
               </div>
             </div>
           </div>
-
-          <!-- Theme Toggle -->
-          <div class="flex flex-1 flex-col items-start justify-between gap-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-3">
-            <div class="flex flex-col gap-1">
-              <p class="text-slate-900 dark:text-white text-sm font-bold leading-tight">Thème</p>
-              <p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Choisissez entre le thème clair et sombre.</p>
-            </div>
-            <label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-slate-200 dark:bg-slate-700 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary">
-              <div class="h-full w-[27px] rounded-full bg-white"></div>
-              <input class="invisible absolute" type="checkbox" id="theme-toggle"/>
-            </label>
-          </div>
-
-          <!-- Ask before filling option -->
-          <div class="flex items-center gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-3">
-            <input class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-primary bg-transparent dark:bg-slate-800" id="ask-before-filling" type="checkbox"/>
-            <label class="text-slate-900 dark:text-white text-sm" for="ask-before-filling">Toujours demander avant l'autocomplétion</label>
-          </div>
-
           <!-- Save button -->
           <div class="flex justify-end py-2">
             <button id="save-button" class="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-primary/90">
-              <span class="material-symbols-outlined">save</span>
               Enregistrer
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
             </button>
           </div>
         </main>
