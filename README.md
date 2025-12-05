@@ -1,7 +1,7 @@
 # NeerHackPrivacyExt
 ## Analyse automatique de fiabilité d’un site web
 
-![presentation.mp4](docs%2Fpresentation.mp4)
+[presentation.mp4](docs%2Fpresentation.mp4)
 
 ##  Installation
 
