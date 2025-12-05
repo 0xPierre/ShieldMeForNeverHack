@@ -94,16 +94,15 @@ html, body {
             'opsz' 24;
 }
 
-/* Rating circle animation */
 @keyframes circleAnimation {
     from {
-        stroke-dashoffset: 282.7; /* Start with full circle hidden */
+        stroke-dashoffset: 283;
     }
     to {
-        stroke-dashoffset: 28.27; /* End with the actual rating value */
+        stroke-dashoffset: 60;
     }
 }
 
 .rating-circle {
-    animation: circleAnimation 1.5s ease-out forwards;
+    animation: circleAnimation 0.8s ease-out forwards;
 }

@@ -25,8 +25,8 @@
           </div>
         </div>
         <header class="flex flex-col items-center gap-4 py-4">
-          <div class="relative flex size-24 items-center justify-center">
-            <svg class="absolute inset-0 size-full" viewBox="0 0 100 100">
+          <div class="relative flex w-28 h-28 items-center justify-center">
+            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
               <!-- Cercle de fond -->
               <circle
                       cx="50"
@@ -35,10 +35,11 @@
                       fill="none"
                       stroke-width="8"
                       class="stroke-red"
-              />
+              ></circle>
 
               <!-- Cercle de progression -->
               <circle
+                      class="rating-circle"
                       cx="50"
                       cy="50"
                       r="45"
@@ -47,7 +48,7 @@
                       stroke-linecap="round"
                       stroke="rgb(11,218,94)"
                       stroke-dasharray="283"
-                      stroke-dashoffset="60"
+                      stroke-dashoffset="283"
                       style="transform-origin:50% 50%; transform:rotate(-90deg);"
               />
 
