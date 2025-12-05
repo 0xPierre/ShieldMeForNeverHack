@@ -7,6 +7,12 @@ class GeoLookupRequest(BaseModel):
     ip_address: IPvAnyAddress
 
 
+class GeoDomainLookupRequest(BaseModel):
+    """Request model for domain geolocation lookup."""
+
+    domain: str
+
+
 class GeoIPResponse(BaseModel):
     """Response model for IP geolocation data."""
 

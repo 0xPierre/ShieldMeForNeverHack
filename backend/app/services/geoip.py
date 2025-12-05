@@ -1,3 +1,4 @@
+import socket
 from pathlib import Path
 
 import geoip2.database
@@ -26,6 +27,39 @@ class GeoIPService:
         if self._reader is not None:
             self._reader.close()
             self._reader = None
+
+    def resolve_domain(self, domain: str) -> str:
+        """Resolve a domain name to an IP address.
+
+        Args:
+            domain: The domain name to resolve.
+
+        Returns:
+            The resolved IP address.
+
+        Raises:
+            ValueError: If the domain cannot be resolved.
+        """
+        try:
+            ip_address = socket.gethostbyname(domain)
+            return ip_address
+        except socket.gaierror:
+            raise ValueError(f"Could not resolve domain: {domain}")
+
+    def lookup_domain(self, domain: str) -> GeoIPResponse:
+        """Look up geolocation data for a domain name.
+
+        Args:
+            domain: The domain name to look up.
+
+        Returns:
+            GeoIPResponse with country and location data.
+
+        Raises:
+            ValueError: If the domain cannot be resolved or IP not found.
+        """
+        ip_address = self.resolve_domain(domain)
+        return self.lookup(ip_address)
 
     def lookup(self, ip_address: str) -> GeoIPResponse:
         """Look up geolocation data for an IP address.
