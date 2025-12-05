@@ -38,8 +38,7 @@
               ></circle>
 
               <!-- Cercle de progression -->
-              <circle
-                      class="rating-circle"
+              <circle id="progressCircle"
                       cx="50"
                       cy="50"
                       r="45"
@@ -54,9 +53,14 @@
 
             </svg>
 
-            <div class="flex flex-col items-center justify-center">
-              <span class="text-3xl font-bold text-slate-900 dark:text-white">A+</span>
-              <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Excellent</span>
+            <div id="ratingSkeleton" class="flex flex-col items-center justify-center animate-pulse">
+              <div class="h-8 w-10 rounded bg-slate-300 dark:bg-slate-700 mb-1"></div>
+              <div class="h-3 w-20 rounded bg-slate-300 dark:bg-slate-700"></div>
+            </div>
+
+            <div id="ratingContent" class="flex flex-col items-center justify-center hidden">
+              <span id="ratingLetter" class="text-3xl font-bold text-slate-900 dark:text-white">A+</span>
+              <span id="ratingText" class="text-xs font-medium text-slate-500 dark:text-slate-400">Excellent</span>
             </div>
           </div>
 
