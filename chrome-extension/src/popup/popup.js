@@ -6,9 +6,110 @@ import {verifyDomain} from "../services/ascii.js";
 
 let nbLoaded, grade;
 
+// Promise that resolves to cached data or null
+let cacheCheckPromise = null;
+
 document.addEventListener('DOMContentLoaded', () => {
-  nbLoaded = 0;
-  grade = 50;
+  nbLoaded = 4;
+  grade = 100;
+  
+  // Start the cache check immediately
+  cacheCheckPromise = loadCachedResults();
+});
+
+/**
+ * Check if all grades are loaded and animate the rating
+ */
+function checkAndAnimateRating() {
+  if (nbLoaded === 0) {
+    // Ensure grade is between 0 and 100
+    grade = Math.max(0, Math.min(100, grade));
+    animateRating(grade);
+  }
+}
+
+/**
+ * Try to load cached results from background service worker
+ */
+async function loadCachedResults() {
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const domain = extractDomain(tab.url);
+    
+    if (!domain) return null;
+    
+    const key = `grade_${domain}`;
+    const stored = await chrome.storage.local.get(key);
+    
+    if (stored[key]) {
+      console.log('[Popup] Using cached data for:', domain, stored[key]);
+      return stored[key];
+    }
+  } catch (error) {
+    console.error('[Popup] Error loading cached results:', error);
+  }
+  
+  return null;
+}
+
+/**
+ * Apply cached results to the UI
+ */
+function applyCachedResults(cached) {
+  // Apply ASCII check result
+  if (cached.checks?.ascii) {
+    const asciiResult = cached.checks.ascii;
+    const asciiElement = document.getElementById("ascii-check-" + asciiResult.isAscii);
+    if (asciiElement) {
+      asciiElement.classList.remove("hidden");
+    }
+  }
+  
+  // Apply phishing result
+  if (cached.checks?.phishing) {
+    const phishingBadge = document.getElementById('phishing-badge');
+    if (cached.checks.phishing.phishing && phishingBadge) {
+      phishingBadge.classList.remove('hidden');
+    }
+  }
+  
+  // Apply WHOIS result
+  if (cached.checks?.whois?.creation_date) {
+    const dateElement = document.getElementById('domain-creation-date');
+    if (dateElement) {
+      let creationDate = cached.checks.whois.creation_date;
+      if (typeof creationDate === 'object') {
+        creationDate = creationDate[0];
+      }
+      const match = creationDate.match(/(\d{4})-(\d{2})-(\d{2})/);
+      if (match) {
+        const [_, y, m, d] = match;
+        dateElement.innerText = `${d}-${m}-${y}`;
+      }
+    }
+  }
+  
+  // Apply external domains count
+  if (cached.checks?.externalDomains?.count !== undefined) {
+    const externalDomainsCount = document.getElementById('external-domains-count');
+    if (externalDomainsCount) {
+      externalDomainsCount.textContent = cached.checks.externalDomains.count;
+    }
+  }
+  
+  // Animate the grade
+  animateRating(cached.grade);
+}
+
+/**
+ * Initialize popup - try cached data first, then run checks if no cache
+ */
+document.addEventListener('DOMContentLoaded', async () => {
+  const cached = await cacheCheckPromise;
+  
+  if (cached) {
+    applyCachedResults(cached);
+  }
 });
 
 /**
@@ -66,14 +167,29 @@ document.addEventListener('DOMContentLoaded', () => {
  *
  */
 document.addEventListener('DOMContentLoaded', async () => {
+  // Wait for cache check and skip if cached data exists
+  const cached = await cacheCheckPromise;
+  if (cached) return;
+  
   // Extract domain name
   const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
   const domain = extractDomain(tab.url);
 
-  const result = await verifyDomain(domain)
-  console.log(result)
+  try {
+    const result = await verifyDomain(domain)
+    console.log(result)
 
-  document.getElementById("ascii-check-" + result.isAscii).classList.remove("hidden");
+    document.getElementById("ascii-check-" + result.isAscii).classList.remove("hidden");
+
+    // If domain contains non-ASCII characters (potential IDN homograph attack)
+    if (!result.isAscii) {
+      grade -= 25;
+    }
+  } catch (error) {
+    console.error('Error verifying ASCII domain:', error);
+  }
+
+  checkAndAnimateRating();
 });
 
 
@@ -117,6 +233,10 @@ document.addEventListener('DOMContentLoaded', async () => {
  * Manage phishing detection
  */
 document.addEventListener('DOMContentLoaded', async () => {
+  // Wait for cache check and skip if cached data exists
+  const cached = await cacheCheckPromise;
+  if (cached) return;
+  
   const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
   const domain = extractDomain(tab.url);
 
@@ -128,17 +248,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (result.phishing) {
       phishingBadge.classList.remove('hidden');
-      grade -= 50; // Penalize heavily for phishing
+      grade -= 70; // Penalize heavily for phishing
     }
   } catch (error) {
     console.error('Error checking phishing:', error);
   }
+
+  checkAndAnimateRating();
 });
 
 /**
  * Manage whois
  */
 document.addEventListener('DOMContentLoaded', async () => {
+  // Wait for cache check and skip if cached data exists
+  const cached = await cacheCheckPromise;
+  if (cached) return;
+  
   const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
   const domain = extractDomain(tab.url);
 
@@ -162,13 +288,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     const score = Math.max(0, 30 - diffDays);
     grade -= score;
-    nbLoaded++;
-
-    animateRating(grade)
 
   } catch {
     console.error('Error looking up WHOIS for domain:', domain);
   }
+
+  checkAndAnimateRating();
 })
 
 
@@ -183,6 +308,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   externalDomainsCard.addEventListener('click', () => {
     window.location.href = 'domains.html';
   });
+
+  // Wait for cache check and skip calculation if cached data exists
+  const cached = await cacheCheckPromise;
+  if (cached) return;
 
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -242,12 +371,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     if (results && results[0] && results[0].result !== undefined) {
-      externalDomainsCount.textContent = results[0].result;
+      const count = results[0].result;
+      externalDomainsCount.textContent = count;
+
+      // Penalize based on number of external domains
+      // More external domains = lower trust score
+      if (count >= 50) {
+        grade -= 45;
+      } else if (count >= 30) {
+        grade -= 35;
+      } else if (count >= 10) {
+        grade -= 25;
+      } else if (count >= 5) {
+        grade -= 15;
+      }
     }
   } catch (error) {
     console.error('Error counting external domains:', error);
     externalDomainsCount.textContent = '?';
   }
+
+  checkAndAnimateRating();
 });
 
 
@@ -371,11 +515,12 @@ function animateRating(value, duration = 800) {
 
 
 function getRatingData(value) {
-  if (value >= 90) return { grade: "A+", text: "Excellent" };
-  if (value >= 80) return { grade: "A", text: "Très bien" };
-  if (value >= 70) return { grade: "B", text: "Bien" };
-  if (value >= 60) return { grade: "C", text: "Correct" };
-  if (value >= 50) return { grade: "D", text: "Moyen" };
-  if (value >= 40) return { grade: "E", text: "Faible" };
-  return { grade: "F", text: "Insuffisant" };
+  if (value >= 90) return { grade: "A+", text: "Très bien" };
+  if (value >= 80) return { grade: "A", text: "Bien" };
+  if (value >= 70) return { grade: "B", text: "Correct" };
+  if (value >= 60) return { grade: "C", text: "Moyen" };
+  if (value >= 50) return { grade: "D", text: "Faible" };
+  if (value >= 40) return { grade: "E", text: "Très faible" };
+  return { grade: "F", text: "Correct" };
 }
+console.log()

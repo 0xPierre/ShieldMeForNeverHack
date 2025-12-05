@@ -5,12 +5,16 @@
   "description": "Extension chrome d'aide à la sécurité sur internet",
   "action": {
     "default_popup": "src/popup/popup.html"
-
+  },
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
   },
   "icons": {
     "255": "./icons/BLUE.png"
   },
   "permissions": ["tabs", "storage", "scripting", "activeTab"],
+  "host_permissions": ["<all_urls>"],
   "web_accessible_resources": [
     {
       "resources": ["fonts/*"],
