@@ -2,48 +2,26 @@
 @font-face {
     font-family: 'Inter';
     font-style: normal;
-    font-weight: 400;
-    src: local('Inter Regular'), local('Inter-Regular'),
-    url(chrome-extension://__MSG_@@extension_id__/fonts/Inter-Regular.woff2) format('woff2');
+    font-weight: 100 900;
+    src: url('../fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'Inter';
-    font-style: normal;
-    font-weight: 500;
-    src: local('Inter Medium'), local('Inter-Medium'),
-    url(chrome-extension://__MSG_@@extension_id__/fonts/Inter-Medium.woff2) format('woff2');
-}
-
-@font-face {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 600;
-    src: local('Inter SemiBold'), local('Inter-SemiBold'),
-    url(chrome-extension://__MSG_@@extension_id__/fonts/Inter-SemiBold.woff2) format('woff2');
-}
-
-@font-face {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 700;
-    src: local('Inter Bold'), local('Inter-Bold'),
-    url(chrome-extension://__MSG_@@extension_id__/fonts/Inter-Bold.woff2) format('woff2');
-}
-
-/* Material Symbols */
-@font-face {
-    font-family: 'Material Symbols Outlined';
-    font-style: normal;
-    font-weight: 400;
-    src: local('Material Symbols Outlined'),
-    url(chrome-extension://__MSG_@@extension_id__/fonts/MaterialSymbolsOutlined.woff2) format('woff2');
+    font-style: italic;
+    font-weight: 100 900;
+    src: url('../fonts/Inter-Italic-VariableFont_opsz,wght.ttf') format('truetype');
 }
 
 /* Custom background colors for light/dark mode */
 :root {
     --background-light: #ffffff;
     --background-dark: #1e293b;
+}
+
+/* Apply Inter font globally */
+html, body {
+    font-family: 'Inter', sans-serif;
 }
 
 .bg-background-light {
