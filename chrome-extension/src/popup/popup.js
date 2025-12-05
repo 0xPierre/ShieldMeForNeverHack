@@ -1,5 +1,5 @@
 import { getCountry, getCountryByDomain } from "../services/geoip.js";
-import { whois } from "../services/index.js";
+import { whois, phishing } from "../services/index.js";
 import { extractDomain, getBaseDomain } from "../services/domain.js";
 import { addTagToEmail, autoCompleteEmail } from "../services/mail.js";
 
@@ -72,21 +72,51 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Update name
   const result = await getCountryByDomain(domain)
   console.log(result)
+  const countryFlagImg = document.getElementById("geoip-country-flag")
+  const countryFlagLoader = document.getElementById("geoip-country-flag-loader")
+
   if (result.country_name) {
     countryTextDiv.innerText = result.country_name
 
     // Update flag
-    const countryFlagImg = document.getElementById("geoip-country-flag")
-    const countryFlagSvg = document.getElementById("geoip-country-flag-svg") 
     countryFlagImg.src = `http://flags.fmcdn.net/data/flags/normal/${result.country_iso_code.toLowerCase()}.png`
     
-    countryFlagSvg.classList.add("hidden")
-    countryFlagImg.classList.remove("hidden")
+    countryFlagImg.onload = () => {
+      countryFlagLoader.classList.add("hidden")
+      countryFlagImg.classList.remove("hidden")
+    }
+    
+    countryFlagImg.onerror = () => {
+      countryFlagLoader.classList.add("hidden")
+    }
   } else {
     countryTextDiv.innerText = "Inconnu"
+    countryFlagLoader.classList.add("hidden")
   }
 
 })
+
+/**
+ * Manage phishing detection
+ */
+document.addEventListener('DOMContentLoaded', async () => {
+  const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+  const domain = extractDomain(tab.url);
+
+  const phishingBadge = document.getElementById('phishing-badge');
+
+  try {
+    const result = await phishing.checkDomain(domain);
+    console.log('Phishing check result:', result);
+
+    if (result.phishing) {
+      phishingBadge.classList.remove('hidden');
+      grade -= 50; // Penalize heavily for phishing
+    }
+  } catch (error) {
+    console.error('Error checking phishing:', error);
+  }
+});
 
 /**
  * Manage whois
@@ -123,6 +153,85 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Error looking up WHOIS for domain:', domain);
   }
 })
+
+
+/**
+ * Manage external domains count and navigation
+ */
+document.addEventListener('DOMContentLoaded', async () => {
+  const externalDomainsCount = document.getElementById('external-domains-count');
+  const externalDomainsCard = document.getElementById('external-domains-card');
+
+  // Navigate to domains page on click
+  externalDomainsCard.addEventListener('click', () => {
+    window.location.href = 'domains.html';
+  });
+
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    
+    // Inject script to count domains in the active tab
+    const results = await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: () => {
+        const RESOURCE_SELECTORS = {
+          scripts: 'script[src]',
+          images: 'img[src]',
+          stylesheets: 'link[rel="stylesheet"][href]',
+          links: 'a[href]',
+          iframes: 'iframe[src]',
+          videos: 'video[src], video source[src]',
+          audio: 'audio[src], audio source[src]',
+          objects: 'object[data]',
+          embeds: 'embed[src]',
+          forms: 'form[action]',
+          preload: 'link[rel="preload"][href], link[rel="prefetch"][href]',
+        };
+
+        function extractDomain(url) {
+          try {
+            const { hostname } = new URL(url);
+            return hostname;
+          } catch {
+            return null;
+          }
+        }
+
+        function getUrlFromElement(element) {
+          if (element.src) return element.src;
+          if (element.href) return element.href;
+          if (element.data) return element.data;
+          if (element.action) return element.action;
+          return null;
+        }
+
+        const domains = new Set();
+        const currentDomain = extractDomain(document.location.href);
+
+        for (const selector of Object.values(RESOURCE_SELECTORS)) {
+          const elements = document.querySelectorAll(selector);
+          for (const element of elements) {
+            const url = getUrlFromElement(element);
+            if (!url) continue;
+            const domain = extractDomain(url);
+            if (domain && domain !== currentDomain && !domain.endsWith(`.${currentDomain}`)) {
+              domains.add(domain);
+            }
+          }
+        }
+
+        return domains.size;
+      },
+    });
+
+    if (results && results[0] && results[0].result !== undefined) {
+      externalDomainsCount.textContent = results[0].result;
+    }
+  } catch (error) {
+    console.error('Error counting external domains:', error);
+    externalDomainsCount.textContent = '?';
+  }
+});
 
 
 /**

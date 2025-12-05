@@ -7,3 +7,5 @@ export * as geoip from './geoip.js';
 export * as whois from './whois.js';
 export * as domain from './domain.js';
 export * as ascii from './ascii.js';
+export * as domainCounter from './domainCounter.js';
+export * as phishing from './phishing.js';
