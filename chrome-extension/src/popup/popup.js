@@ -310,7 +310,7 @@ const applySettings = async (items) => {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded',  () => {
   loadSettings()
   const copyButton = document.getElementById('copy-button');
   const autofillButton = document.getElementById('autofill-button');
@@ -324,11 +324,28 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (autofillButton) {
-    autofillButton.addEventListener('click', () => {
-      autoCompleteEmail(mailSelector.value);
+    autofillButton.addEventListener('click', async () => {
+      const success = await autoCompleteEmail(mailSelector.value);
+
+      showAutofillNotification(success);
     });
   }
 })
+
+// Show an autofill notification
+function showAutofillNotification(success) {
+  // Create notification element
+  const notification = document.createElement('div');
+  let couleur = success ? "green" : "red";
+  notification.className = 'fixed bottom-4 right-4 bg-'+couleur+'-500 text-white px-4 py-2 rounded-md shadow-lg';
+  notification.textContent = success ? 'Email inséré avec succès' : "Aucun champs email trouvé";
+  document.body.appendChild(notification);
+
+  // Remove notification after 2 seconds
+  setTimeout(() => {
+    notification.remove();
+  }, 2000);
+}
 
 function animateRating(value, duration = 800) {
   const circle = document.getElementById("progressCircle");

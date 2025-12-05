@@ -9,22 +9,40 @@ export function addTagToEmail(email, tag) {
     const taggedLocal = `${localPart}+${tag}`;
     return `${taggedLocal}@${domain}`;
   }
-  
-  export async function autoCompleteEmail(email) {
+
+export async function autoCompleteEmail(email) {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: (email) => {
-        const inputs = document.body.querySelectorAll(
-          'input[autocomplete~="username"], input[autocomplete~="email"]'
-        );
-        inputs.forEach(input => {
-          input.value = email;
-          input.dispatchEvent(new Event('input', { bubbles: true }));
-        });
-      },
-      args: [email]
+
+    const [{ result }] = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        world: "MAIN",
+        func: (email) => {
+            const inputs = document.body.querySelectorAll(
+                'input[autocomplete~="username"], input[autocomplete~="email"]'
+            );
+
+            if (inputs.length === 0) return false;
+
+            inputs.forEach(input => {
+                input.value = email;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+
+                // Ajout d'une animation
+                input.style.transition = "background-color 0.3s ease";
+                input.style.backgroundColor = "#d1f7d6";
+
+                setTimeout(() => {
+                    input.style.backgroundColor = "";
+                }, 500);
+            });
+
+            return true;
+        },
+        args: [email]
     });
-  }
+
+    return result;
+}
+
+
   
