@@ -16,8 +16,9 @@ export function addTagToEmail(email, tag) {
     await chrome.scripting.executeScript({
       target: { tabId: tab.id },
       func: (email) => {
-        const inputs = document.body.querySelectorAll('input[autocomplete="username"], input[autocomplete="email"]');
-        console.log(inputs);
+        const inputs = document.body.querySelectorAll(
+          'input[autocomplete~="username"], input[autocomplete~="email"]'
+        );
         inputs.forEach(input => {
           input.value = email;
           input.dispatchEvent(new Event('input', { bubbles: true }));
@@ -26,3 +27,4 @@ export function addTagToEmail(email, tag) {
       args: [email]
     });
   }
+  
