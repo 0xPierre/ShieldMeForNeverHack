@@ -1,3 +1,7 @@
+import { getCountry, getCountryByDomain } from "../services/geoip.js";
+import { whois } from "../services/index.js";
+import { extractDomain } from "../services/domain.js";
+
 /**
  * 
  * Manage the domain display in the popup
@@ -47,3 +51,50 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 })
 
+
+/**
+ * Manage Country GEOIP
+ */
+document.addEventListener('DOMContentLoaded', async () => {
+  const countryTextDiv = document.getElementById("geoip-country")
+  countryTextDiv.innerText = 'Loading...'
+  // Extract domain name
+  const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+  const domain = extractDomain(tab.url);
+  // Update name
+  const result = await getCountryByDomain(domain)
+  console.log(result)
+  if (result.country_name) {
+    countryTextDiv.innerText = result.country_name
+
+    // Update flag
+    const countryFlagImg = document.getElementById("geoip-country-flag")
+    const countryFlagSvg = document.getElementById("geoip-country-flag-svg") 
+    countryFlagImg.src = `http://flags.fmcdn.net/data/flags/normal/${result.country_iso_code.toLowerCase()}.png`
+    
+    countryFlagSvg.classList.add("hidden")
+    countryFlagImg.classList.remove("hidden")
+  } else {
+    countryTextDiv.innerText = "Inconnu"
+  }
+
+})
+
+/**
+ * Manage whois
+ */
+document.addEventListener('DOMContentLoaded', async () => {
+  const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+  const domain = extractDomain(tab.url);
+
+  const dateElement = document.getElementById('domain-creation-date')
+
+  try {
+    const result = await whois.lookup(domain);
+    const [_, y, m, d] = result.creation_date.match(/(\d{4})-(\d{2})-(\d{2})/);
+    const out = `${d}-${m}-${y}`;
+    dateElement.innerText = out
+  } catch {
+    console.error('Error looking up WHOIS for domain:', domain);
+  }
+})
