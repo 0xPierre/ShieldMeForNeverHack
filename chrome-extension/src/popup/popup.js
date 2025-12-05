@@ -1,6 +1,7 @@
 import { getCountry, getCountryByDomain } from "../services/geoip.js";
 import { whois } from "../services/index.js";
-import { extractDomain } from "../services/domain.js";
+import { extractDomain, getBaseDomain } from "../services/domain.js";
+import { addTagToEmail, autoCompleteEmail } from "../services/mail.js";
 
 /**
  * 
@@ -91,10 +92,88 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     const result = await whois.lookup(domain);
+    console.log(result)
+    if (typeof result.creation_date === 'object') {
+      result.creation_date = result.creation_date[0];
+    }
     const [_, y, m, d] = result.creation_date.match(/(\d{4})-(\d{2})-(\d{2})/);
     const out = `${d}-${m}-${y}`;
     dateElement.innerText = out
   } catch {
     console.error('Error looking up WHOIS for domain:', domain);
+  }
+})
+
+
+/**
+ * 
+ * Manage mail tracking
+ * 
+ */
+
+
+let localItems = null;
+
+const loadSettings = async () => {
+  // Default settings
+  const defaultSettings = {
+    aliasFormat: 'nomdusite',
+    userEmail: '',
+  };
+
+  // Check if chrome.storage is available
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+    chrome.storage.sync.get(defaultSettings, function(items) {
+      localItems = items;
+      applySettings(items);
+    });
+  } else {
+    // If chrome.storage is not available, use default settings
+    localItems = defaultSettings;
+  }
+}
+
+const getCurrentTaggedEmail = async (items) => {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const domain = extractDomain(tab.url);
+  const baseDomain = getBaseDomain(domain);
+  const tag = baseDomain.split('.')[0];
+  const currentTaggedEmail = addTagToEmail(items.userEmail, tag);
+  return currentTaggedEmail;
+}
+
+
+const applySettings = async (items) => {
+  const mailSelector = document.getElementById('mail-selector');
+  if (mailSelector) {
+    
+    const currentTaggedEmail = await getCurrentTaggedEmail(items)
+
+    mailSelector.value = currentTaggedEmail;
+    // Add options to mail selector
+    const options = document.createElement('option');
+    options.value = currentTaggedEmail;
+    options.text = currentTaggedEmail;
+    mailSelector.appendChild(options);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadSettings()
+  const copyButton = document.getElementById('copy-button');
+  const autofillButton = document.getElementById('autofill-button');
+  const mailSelector = document.getElementById('mail-selector');
+
+  
+  if (copyButton) {
+    copyButton.addEventListener('click', () => {
+      navigator.clipboard.writeText(mailSelector.value);
+    });
+  }
+  
+  if (autofillButton) {
+    autofillButton.addEventListener('click', () => {
+      autoCompleteEmail(mailSelector.value);
+    });
   }
 })
