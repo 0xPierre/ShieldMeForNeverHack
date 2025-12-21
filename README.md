@@ -1,4 +1,4 @@
-# NeerHackPrivacyExt
+# ShieldMeForNeverHack
 ## Analyse automatique de fiabilité d’un site web
 
 
